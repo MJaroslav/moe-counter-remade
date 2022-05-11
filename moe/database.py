@@ -56,5 +56,5 @@ async def get_visits(key, do_inc=True):
                 if do_inc:
                     visits += 1
                     await conn.execute(update(keys).where(keys.c.name == key).values(visits=visits))
-                    return visits
+                return visits
         return -1
