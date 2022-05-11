@@ -45,3 +45,16 @@ async def revoke_key(key, password, salt):
         password_hash = utils.hash_password(password, salt)
         return (await conn.execute(
             delete(keys).where(and_(keys.c.name == key, keys.c.password_hash == password_hash)))).rowcount > 0
+
+
+async def get_visits(key, do_inc=True):
+    async with begin() as conn:
+        result = await conn.execute(select(keys.c.visits).where(keys.c.name == key))
+        if result:
+            visits = result.scalar()
+            if visits is not None and visits > -1:
+                if do_inc:
+                    visits += 1
+                    await conn.execute(update(keys).where(keys.c.name == key).values(visits=visits))
+                    return visits
+        return -1
