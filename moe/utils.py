@@ -1,6 +1,8 @@
-import re
-import magic
 import base64
+import hashlib
+import re
+
+import magic
 
 
 def get_image_dimensions(file):
@@ -24,3 +26,7 @@ def trim_and_str_number(number: int, max_length: int = 7, lead_zeros: bool = Tru
         if lead_zeros:
             number = "0" * max(max_length - len(number), 0) + number
     return number
+
+
+def hash_password(password, salt):
+    return hashlib.sha1(password.encode("UTF-8") + salt.encode("UTF-8")).hexdigest()
