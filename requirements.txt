@@ -10,3 +10,5 @@ sniffio==1.2.0
 starlette==0.19.1
 typing-extensions==4.2.0
 uvicorn==0.17.6
+python-magic-bin==0.4.14; platform_system == "Windows"
+yattag==1.14.0

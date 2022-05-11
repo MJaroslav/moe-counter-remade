@@ -1,16 +1,25 @@
 from fastapi import FastAPI
 from fastapi.responses import FileResponse, HTMLResponse
-import moe.utils
 
+from moe.thememanager import ThemeManager
 
 app = FastAPI()
+theme_manager = ThemeManager()
 
 
 @app.get("/")
-async def root():
+async def get_root():
     return FileResponse("index.html", media_type="text/html")
 
 
-@app.get("/number/{number}")
-async def number(number: int, theme: str = "asoul", length: int = 7, zeros: bool = True):
-    return HTMLResponse(moe.utils.get_count_image(number, theme, length, zeros), media_type="image/svg+xml", headers={'cache-control': 'max-age=31536000'})
+@app.get("/request/{number}")
+async def get_number(number: int, max_length: int = 7, lead_zeros: bool = False,
+                     theme: str = None):
+    return HTMLResponse(theme_manager.build_image(number, max_length, False, lead_zeros, theme),
+                        media_type="image/svg+xml", headers={'cache-control': 'max-age=31536000'})
+
+
+@app.get("/request/demo")
+async def get_demo(theme: str = None):
+    return HTMLResponse(theme_manager.build_image(demo=True, theme=theme), media_type="image/svg+xml",
+                        headers={'cache-control': 'max-age=31536000'})
