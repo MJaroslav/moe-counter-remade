@@ -12,7 +12,7 @@ keys = Table(
     metadata,
     Column("name", String(), unique=True, nullable=False),
     Column("password_hash", String(), nullable=False),
-    Column("visits", Integer, default=0, nullable=False)
+    Column("visits", Integer, server_default="0", nullable=False)
 )
 
 
@@ -36,7 +36,7 @@ async def create_key(key, password, salt):
     async with begin() as conn:
         if not (await conn.execute(select(True).where(keys.c.name == key))).scalar():
             password_hash = utils.hash_password(password, salt)
-            await conn.execute(insert(keys).values(name=key, password_hash=password_hash, visits=0))
+            await conn.execute(insert(keys).values(name=key, password_hash=password_hash))
             return password_hash
 
 
@@ -47,14 +47,34 @@ async def revoke_key(key, password, salt):
             delete(keys).where(and_(keys.c.name == key, keys.c.password_hash == password_hash)))).rowcount > 0
 
 
+async def set_visits(key, value, password, salt):
+    value = max(value, 0)
+    async with begin() as conn:
+        return (await conn.execute(update(keys).where(
+            and_(keys.c.name == key, keys.c.password_hash == utils.hash_password(password, salt))).values(
+            visits=value))).rowcount > 0
+
+
 async def get_visits(key, do_inc=True):
     async with begin() as conn:
         result = await conn.execute(select(keys.c.visits).where(keys.c.name == key))
-        if result:
+        if result.rowcount == 1:
             visits = result.scalar()
-            if visits is not None and visits > -1:
-                if do_inc:
-                    visits += 1
-                    await conn.execute(update(keys).where(keys.c.name == key).values(visits=visits))
-                return visits
+            if do_inc:
+                visits += 1
+                await conn.execute(update(keys).where(keys.c.name == key).values(visits=visits))
+            return visits
         return -1
+
+
+async def check_password(key, password, salt):
+    async with begin() as conn:
+        return (await conn.execute(
+            select(keys).where(keys.c.name == key,
+                               keys.c.password_hash == utils.hash_password(password, salt)))).rowcount > 0
+
+
+async def check_key(key):
+    async with begin() as conn:
+        return await conn.execute(
+            select(keys).where(keys.c.name == key)).rowcount > 0
