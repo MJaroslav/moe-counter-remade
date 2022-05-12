@@ -1,10 +1,11 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, HTMLResponse
-
+from starlette.staticfiles import StaticFiles
 import moe.database as database
 from moe.thememanager import ThemeManager
 
 app = FastAPI()
+app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 theme_manager = ThemeManager()
 
 

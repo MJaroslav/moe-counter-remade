@@ -29,7 +29,8 @@ class ThemeManager(object):
                 x = y = 0
                 for i in utils.trim_and_str_number(number, max_length, lead_zeros):
                     data, width, height = self.themes[theme][i].values()
-                    with tag("image", x=x, y=0, width=width, height=height, **{'xlink:href': data}):
+                    with tag("image", x=x, y=0, width=width, height=height,
+                             **{'xlink:href': data, "image-rendering": "pixelated"}):
                         x += width
                         y = max(height, y)
             doc.attr(width=x, height=y)
