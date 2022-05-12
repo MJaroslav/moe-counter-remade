@@ -55,26 +55,26 @@ async def set_visits(key, value, password, salt):
             visits=value))).rowcount > 0
 
 
-async def get_visits(key, do_inc=True):
+async def get_visits(key, do_inc):
     async with begin() as conn:
-        result = await conn.execute(select(keys.c.visits).where(keys.c.name == key))
-        if result.rowcount == 1:
-            visits = result.scalar()
+        result = (await conn.execute(select(keys.c.visits).where(keys.c.name == key))).scalar()
+        if result is not None:
             if do_inc:
-                visits += 1
-                await conn.execute(update(keys).where(keys.c.name == key).values(visits=visits))
-            return visits
+                result += 1
+                await conn.execute(update(keys).where(keys.c.name == key).values(visits=result))
+            return result
         return -1
 
 
 async def check_password(key, password, salt):
     async with begin() as conn:
-        return (await conn.execute(
-            select(keys).where(keys.c.name == key,
-                               keys.c.password_hash == utils.hash_password(password, salt)))).rowcount > 0
+        return len((await conn.execute(
+            select(keys).where(
+                and_(keys.c.name == key, keys.c.password_hash == utils.hash_password(password, salt))
+            ))).fetchall()) > 0
 
 
 async def check_key(key):
     async with begin() as conn:
-        return await conn.execute(
-            select(keys).where(keys.c.name == key)).rowcount > 0
+        return len((await conn.execute(
+            select(keys).where(keys.c.name == key))).fetchall()) > 0
