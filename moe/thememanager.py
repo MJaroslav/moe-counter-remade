@@ -11,8 +11,8 @@ class ThemeManager(object):
         self.default_theme = default_theme
         self.__load_themes__()
 
-    def build_image(self, number: int = 0, max_length: int = 7, demo: bool = False, lead_zeros: bool = False,
-                    theme: str = None):
+    def build_image(self, number: int = 0, max_length: int = 0, demo: bool = False, lead_zeros: bool = False,
+                    theme: str = None, smoothing: bool = False):
         if theme not in self.themes:
             theme = self.default_theme
         if demo:
@@ -29,8 +29,11 @@ class ThemeManager(object):
                 x = y = 0
                 for i in utils.trim_and_str_number(number, max_length, lead_zeros):
                     data, width, height = self.themes[theme][i].values()
+                    attrs = {'xlink:href': data}
+                    if not smoothing:
+                        attrs["image-rendering"] = "pixelated"
                     with tag("image", x=x, y=0, width=width, height=height,
-                             **{'xlink:href': data, "image-rendering": "pixelated"}):
+                             **attrs):
                         x += width
                         y = max(height, y)
             doc.attr(width=x, height=y)

@@ -1,9 +1,10 @@
 <!DOCTYPE html>
+<!--suppress HtmlFormInputWithoutLabel, HtmlUnknownTarget, RequiredAttributes -->
 <html lang="en">
 <head>
-    <meta charset="UTF-*">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Moe counter remade</title>
+    <title>Moe counter! Remade!!</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="assets/style.css">
@@ -11,25 +12,202 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
 </head>
 <body>
-<div id="layout" class="container">
+<div id="layout" class="container ">
     <div>
+        <h1 class="display-1">Moe counter! <small class="text-muted">Remade!!</small></h1>
         <div>
-            <img alt="Main page counter" src="request/image@index?theme=rule34" height="120px"/>
+            <img class="image-preview" alt="Main page counter" src="request/image@index?theme=rule34" height="120px"/>
         </div>
-        <div>
-            <code class="d-inline-block replace-link">{LINK}/request/demo?theme=</code>
-            <select class="form-select d-inline-block form-select-sm w-auto" aria-label="Select theme" type="button"
-                    id="themeSelector" onclick="replaceDemo()">
-            </select>
+        <h3 class="my-2 display-5">How to use</h3>
+
+        <h4 class="my-2">Get list of themes</h4>
+        <div class="request-container my-2 align-middle">
+            <button type="button" class="btn btn-primary btn-sm mx-2" onclick="copyThemesLink()">
+                Copy
+            </button>
+            <code class="d-inline-block this-href-mark">GET: {LINK}request/themes</code>
+        </div>
+        <code id="themes" class="out-background"></code>
+        <div class="alert d-flex align-items-center my-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                 class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img"
+                 aria-label="Warning:">
+                <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+            </svg>
+            <i>Warning: Themes with <code>-h</code> suffix is a NSFW!</i>
         </div>
 
-        <div>
-            <img id="demo" alt="Demo" src="request/demo" height="120px"/>
+        <h4 class="my-2">Demo image</h4>
+        <div class="request-container my-2 align-middle">
+            <button type="button" class="btn btn-primary btn-sm mx-2" onclick="copyDemoLink()">
+                Copy
+            </button>
+            <code class="d-inline-block this-href-mark">GET: {LINK}request/demo?theme=</code
+            ><select class="form-select d-inline-block form-select-sm w-auto" aria-label="Select theme" type="button"
+                     id="demoThemeSelector" onclick="replaceDemo()">
+        </select><code>&smoothing=</code><select
+                class="form-select d-inline-block form-select-sm w-auto bool-selector" aria-label="Select theme"
+                type="button"
+                id="demoSmoothingSelector" onclick="replaceDemo()">
+            <option selected value="false">false</option>
+            <option value="true">true</option>
+        </select>
         </div>
+        <div>
+            <img class="out-background image-preview" id="demo" alt="Demo" src="request/demo" height="130px"/>
+        </div>
+
+        <h4 class="my-2">Any number image</h4>
+        <div class="request-container my-2 align-middle">
+            <button type="button" class="btn btn-primary btn-sm mx-2" onclick="copyNumberLink()">
+                Copy
+            </button>
+            <code class="d-inline-block this-href-mark">GET: {LINK}request/number?value=</code
+            ><input id="numberValue" placeholder="value" type="text" style="max-width: 46px;" value="1234"/><code>&theme=</code><select
+                class="form-select d-inline-block form-select-sm w-auto" aria-label="Select theme" type="button"
+                id="numberThemeSelector" onclick="replaceNumber()">
+        </select><code>&lead_zeros=</code><select
+                class="form-select d-inline-block form-select-sm w-auto bool-selector" aria-label="Select theme"
+                type="button"
+                id="numberLeadZerosSelector" onclick="replaceNumber()">
+            <option value="false">false</option>
+            <option selected value="true">true</option>
+        </select><code>&max_length=</code><input id="numberMaxLength" placeholder="max" type="text"
+                                                 style="max-width: 46px;" value="7"/><code>&smoothing=</code><select
+                class="form-select d-inline-block form-select-sm w-auto bool-selector" aria-label="Select theme"
+                type="button"
+                id="numberSmoothingSelector" onclick="replaceNumber()">
+            <option selected value="false">false</option>
+            <option value="true">true</option>
+        </select>
+        </div>
+        <div class="my-2">
+            <img class="out-background image-preview" id="number" alt="Number"
+                 src="request/number?value=1234&theme=asoul&lead_zeros=true&max_length=7&smoothing=false"
+                 height="130px"/>
+        </div>
+
+        <h4 class="my-2">Register your counter</h4>
+        <div class="request-container my-2 align-middle">
+            <button type="button" class="btn btn-primary btn-sm mx-2" onclick="copyRegisterLink()">
+                Copy
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm mx-2" onclick="executeRegister()">
+                Execute
+            </button>
+            <code class="d-inline-block this-href-mark">POST: {LINK}request/take_key?key=</code
+            ><input id="registerKey" placeholder="key" type="text" style="max-width: 80px;"/><code>&password=</code
+        ><input id="registerPassword" placeholder="password" type="text" style="max-width: 80px;"/><code>&salt=</code
+        ><input id="registerSalt" placeholder="salt" type="text" style="max-width: 80px;"/>
+        </div>
+        <code id="register" class="out-background">Place for request answer</code>
+
+        <h4 class="my-2">Delete your counter</h4>
+        <div class="request-container my-2 align-middle">
+            <button type="button" class="btn btn-primary btn-sm mx-2" onclick="copyDeleteLink()">
+                Copy
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm mx-2" onclick="executeDelete()">
+                Execute
+            </button>
+            <code class="d-inline-block this-href-mark">DELETE: {LINK}request/revoke_key?key=</code
+            ><input id="deleteKey" placeholder="key" type="text" style="max-width: 80px;"/><code>&password=</code
+        ><input id="deletePassword" placeholder="password" type="text" style="max-width: 80px;"/><code>&salt=</code
+        ><input id="deleteSalt" placeholder="salt" type="text" style="max-width: 80px;"/>
+        </div>
+        <code id="delete" class="out-background">Place for request answer</code>
+
+        <h4 class="my-2">Counter image</h4>
+        <div class="request-container my-2 align-middle">
+            <button type="button" class="btn btn-primary btn-sm mx-2" onclick="copyImageLink()">
+                Copy
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm mx-2" onclick="executeImage()">
+                Execute
+            </button>
+            <code class="d-inline-block this-href-mark">GET: {LINK}request/image@</code
+            ><input id="imageKey" placeholder="key" type="text" style="max-width: 46px;"
+        /><code>?theme=</code><select
+                class="form-select d-inline-block form-select-sm w-auto" aria-label="Select theme" type="button"
+                id="imageThemeSelector">
+        </select><code>&lead_zeros=</code><select
+                class="form-select d-inline-block form-select-sm w-auto bool-selector" aria-label="Select theme"
+                type="button"
+                id="imageLeadZerosSelector">
+            <option value="false">false</option>
+            <option selected value="true">true</option>
+        </select><code>&max_length=</code><input id="imageMaxLength" placeholder="max" type="text"
+                                                 style="max-width: 46px;" value="7"/><code>&smoothing=</code><select
+                class="form-select d-inline-block form-select-sm w-auto bool-selector" aria-label="Select theme"
+                type="button"
+                id="imageSmoothingSelector">
+            <option selected value="false">false</option>
+            <option value="true">true</option>
+        </select><code>&do_inc=</code><select
+                class="form-select d-inline-block form-select-sm w-auto bool-selector" aria-label="Select theme"
+                type="button"
+                id="imageDoIncSelector">
+            <option value="false">false</option>
+            <option selected value="true">true</option>
+        </select>
+        </div>
+        <div class="my-2">
+            <img class="out-background image-preview" id="image" alt="Counter image preview" height="130px"/>
+        </div>
+
+        <h4 class="my-2">Counter record</h4>
+        <div class="request-container my-2 align-middle">
+            <button type="button" class="btn btn-primary btn-sm mx-2" onclick="copyRecordLink()">
+                Copy
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm mx-2" onclick="executeRecord()">
+                Execute
+            </button>
+            <code class="d-inline-block this-href-mark">GET: {LINK}request/image@</code
+            ><input id="recordKey" placeholder="key" type="text" style="max-width: 46px;"
+        /><code>&do_inc=</code><select
+                class="form-select d-inline-block form-select-sm w-auto bool-selector" aria-label="Select theme"
+                type="button"
+                id="recordDoIncSelector">
+            <option selected value="false">false</option>
+            <option value="true">true</option>
+        </select>
+        </div>
+        <code id="record" class="out-background my-2">Place for request answer</code>
+
+        <h4 class="my-2">Change counter value</h4>
+        <div class="request-container my-2 align-middle">
+            <button type="button" class="btn btn-primary btn-sm mx-2" onclick="copySetLink()">
+                Copy
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm mx-2" onclick="executeSet()">
+                Execute
+            </button>
+            <code class="d-inline-block this-href-mark">DELETE: {LINK}request/set@key</code
+            ><input id="setKey" placeholder="key" type="text" style="max-width: 80px;"/><code>?password=</code
+        ><input id="setPassword" placeholder="password" type="text" style="max-width: 80px;"/><code>&salt=</code
+        ><input id="setSalt" placeholder="salt" type="text" style="max-width: 80px;"/><code>&value=</code><input
+                id="setValue" placeholder="value" type="text" style="max-width: 80px;"/>
+        </div>
+        <code id="set" class="out-background my-2">Place for request answer</code>
+
+        <h4 class="my-2">Other docs</h4>
+        You can see all docs on <a href="/docs" class="this-href-mark">{LINK}docs</a> page.
+        <h3 class="my-2 display-5">Credits</h3>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><a href="https://count.getloli.com/">Original Moe Counter!</a></li>
+            <li class="list-group-item"><a href="https://github.com/moebooru/moebooru">Moebooru</a></li>
+            <li class="list-group-item"><a href='javascript:alert("!!! NSFW LINK !!!\nPlease enter the url manually")'>rule34.xxx
+                (NSFW)</a></li>
+            <li class="list-group-item"><a href='javascript:alert("!!! NSFW LINK !!!\nPlease enter the url manually")'>gelbooru.com
+                (NSFW)</a></li>
+        </ul>
+
+        <h4 class="my-2">Links</h4>
+        <ul class="list-group list-group-flush" style="margin-bottom: 50px;">
+            <li class="list-group-item"><a href="https://github.com/MJaroslav/moe-counter-remade">GitHub</a></li>
+        </ul>
     </div>
-    <svg>
-
-    </svg>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"

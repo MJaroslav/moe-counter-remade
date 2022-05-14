@@ -19,7 +19,7 @@ def to_base64(file, charset="UTF-8"):
         return base64.b64encode(file.read()).decode(charset)
 
 
-def trim_and_str_number(number: int, max_length: int = 7, lead_zeros: bool = True):
+def trim_and_str_number(number: int, max_length: int = 0, lead_zeros: bool = True):
     number = str(number)
     if max_length > 0:
         number = number[-max_length:]
