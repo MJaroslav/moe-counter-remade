@@ -24,7 +24,7 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
 
 
 def begin():
-    return create_async_engine('sqlite+aiosqlite:///.\\db.sqlite3', echo=True).begin()
+    return create_async_engine('sqlite+aiosqlite:///db.sqlite3', echo=True).begin()
 
 
 async def sync():

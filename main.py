@@ -1,6 +1,8 @@
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
 from starlette.staticfiles import StaticFiles
+
+import io
 
 import moe.database as database
 from moe.thememanager import ThemeManager
@@ -36,7 +38,7 @@ async def get_root():
 
 @app.get("/request/number")
 async def get_number(value: int, max_length: int = 7, lead_zeros: bool = False,
-                     theme: str = None, smoothing: bool = False):
+                     theme: str = None, smoothing: bool = False, hard: bool = False):
     """
     Generate image for any number.
     :param value: Number for generate.
@@ -44,23 +46,29 @@ async def get_number(value: int, max_length: int = 7, lead_zeros: bool = False,
     Use zero for disable.
     :param lead_zeros: Adds extra zeros to left of value if its length less than max_length.
     :param theme: Image set for numbers. For wrong values default theme will be used.
-    :param smoothing Do image smoothing.
+    :param smoothing: Do image smoothing.
+    :param hard: Return PNG instead of SVG.
     :return: Generated image from params with one year max cache age.
     """
-    return HTMLResponse(theme_manager.build_image(value, max_length, False, lead_zeros, theme, smoothing),
-                        media_type="image/svg+xml", headers={'cache-control': 'max-age=31536000'})
+    response_type = StreamingResponse if hard else HTMLResponse
+    media_type = "image/png" if hard else "image/svg+xml"
+    return response_type(theme_manager.build_image(hard, value, max_length, False, lead_zeros, theme, smoothing),
+                            media_type=media_type, headers={'cache-control': 'max-age=31536000'})
 
 
 @app.get("/request/demo")
-async def get_demo(theme: str = None, smoothing: bool = False):
+async def get_demo(theme: str = None, smoothing: bool = False, hard: bool = False):
     """
     Generate image for theme demonstration.
     :param theme: Image set for numbers. For wrong values default theme will be used.
-    :param smoothing Do image smoothing.
+    :param smoothing: Do image smoothing.
+    :param hard: Return PNG instead of SVG.
     :return: Generated image from params with one year max cache age.
     """
-    return HTMLResponse(theme_manager.build_image(demo=True, theme=theme, smoothing=smoothing),
-                        media_type="image/svg+xml",
+    response_type = StreamingResponse if hard else HTMLResponse
+    media_type = "image/png" if hard else "image/svg+xml"
+    return response_type(theme_manager.build_image(hard=hard, demo=True, theme=theme, smoothing=smoothing),
+                        media_type=media_type,
                         headers={'cache-control': 'max-age=31536000'})
 
 
@@ -70,7 +78,7 @@ async def get_themes():
     Get list of available themes.
     :return: List of themes in json array format.
     """
-    return list(theme_manager.themes.keys())
+    return sorted(list(theme_manager.themes.keys()))
 
 
 @app.post("/request/take_key")
@@ -107,7 +115,7 @@ async def delete_remove_key(key: str, password: str, salt: str = ""):
 
 @app.get("/request/image@{key}")
 async def get_image(key: str, max_length: int = 7, lead_zeros: bool = True, theme: str = None, do_inc: bool = True,
-                    smoothing: bool = False):
+                    smoothing: bool = False, hard: bool = False):
     """
     Generate image for counter.
     :param key: Any registered counter key.
@@ -116,16 +124,19 @@ async def get_image(key: str, max_length: int = 7, lead_zeros: bool = True, them
     :param lead_zeros: Adds extra zeros to left of value if its length less than max_length.
     :param theme: Image set for numbers. For wrong values default theme will be used.
     :param do_inc: Do increment for counter by this request.
-    :param smoothing Do image smoothing.
+    :param smoothing: Do image smoothing.
+    :param hard: Return generated PNG instead of SVG.
     :return: Generated image of counter with their current value none zero cache age.
     """
     await check_key(key)
     value = await database.get_visits(key, do_inc)
     if value == -1:
         raise HTTPException(status_code=404, detail="This key not registered")
-    return HTMLResponse(theme_manager.build_image(value, max_length, False, lead_zeros, theme, smoothing),
-                        media_type="image/svg+xml",
-                        headers={'cache-control': 'max-age=0, no-cache, no-store, must-revalidate'})
+    response_type = StreamingResponse if hard else HTMLResponse
+    media_type = "image/png" if hard else "image/svg+xml"
+    return response_type(theme_manager.build_image(hard, value, max_length, False, lead_zeros, theme, smoothing),
+                            media_type=media_type,
+                            headers={'cache-control': 'max-age=0, no-cache, no-store, must-revalidate'})
 
 
 @app.get("/request/record@{key}")

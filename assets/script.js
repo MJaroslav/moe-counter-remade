@@ -36,12 +36,12 @@ function loadFuckingFavicon() {
             reader.onerror = reject;
             reader.readAsDataURL(blob);
         })).then(dataUrl => {
-        const docHead = document.getElementsByTagName('head')[0];
-        const newLink = document.createElement('link');
-        newLink.rel = 'shortcut icon';
-        newLink.href = dataUrl.toString();
-        docHead.appendChild(newLink);
-    })
+            const docHead = document.getElementsByTagName('head')[0];
+            const newLink = document.createElement('link');
+            newLink.rel = 'shortcut icon';
+            newLink.href = dataUrl.toString();
+            docHead.appendChild(newLink);
+        })
 }
 
 function replaceNumber() {
@@ -50,13 +50,15 @@ function replaceNumber() {
     const max_length = document.getElementById("numberMaxLength").value
     const lead_zeros = $("#numberLeadZerosSelector option:selected").text();
     const smoothing = $("#numberSmoothingSelector option:selected").text();
-    $("#number").attr("src", `request/number?theme=${theme}&value=${value}&max_length=${max_length}&lead_zeros=${lead_zeros}&smoothing=${smoothing}`)
+    const hard = $("#numberHardSelector option:selected").text();
+    $("#number").attr("src", `request/number?theme=${theme}&value=${value}&max_length=${max_length}&lead_zeros=${lead_zeros}&smoothing=${smoothing}&hard=${hard}`)
 }
 
 function replaceDemo() {
     const theme = $("#demoThemeSelector option:selected").text();
     const smoothing = $("#demoSmoothingSelector option:selected").text();
-    $("#demo").attr('src', `request/demo?theme=${theme}&smoothing=${smoothing}`);
+    const hard = $("#demoHardSelector option:selected").text();
+    $("#demo").attr('src', `request/demo?theme=${theme}&smoothing=${smoothing}&hard=${hard}`);
 }
 
 
@@ -73,7 +75,8 @@ function copy(source) {
 function copyDemoLink() {
     const theme = $("#demoThemeSelector option:selected").text();
     const smoothing = $("#demoSmoothingSelector option:selected").text();
-    copy(`request/demo?theme=${theme}&smoothing=${smoothing}`);
+    const hard = $("#demoHardSelector option:selected").text();
+    copy(`request/demo?theme=${theme}&smoothing=${smoothing}&hard=${hard}`);
 }
 
 function copyThemesLink() {
@@ -162,7 +165,8 @@ function executeImage() {
     const lead_zeros = $("#imageLeadZerosSelector option:selected").text();
     const smoothing = $("#imageSmoothingSelector option:selected").text();
     const do_inc = $("#imageDoIncSelector option:selected").text();
-    $("#image").attr("src", `request/image@${key}?theme=${theme}&max_length=${max_length}&lead_zeros=${lead_zeros}&smoothing=${smoothing}&do_inc=${do_inc}`)
+    const hard = $("#imageHardSelector option:selected").text();
+    $("#image").attr("src", `request/image@${key}?theme=${theme}&max_length=${max_length}&lead_zeros=${lead_zeros}&smoothing=${smoothing}&do_inc=${do_inc}&hard=${hard}`)
 
 }
 
@@ -173,7 +177,8 @@ function copyImageLink() {
     const lead_zeros = $("#imageLeadZerosSelector option:selected").text();
     const smoothing = $("#imageSmoothingSelector option:selected").text();
     const do_inc = $("#imageDoIncSelector option:selected").text();
-    copy(`request/image@${key}?theme=${theme}&max_length=${max_length}&lead_zeros=${lead_zeros}&smoothing=${smoothing}&do_inc=${do_inc}`);
+    const hard = $("#imageHardSelector option:selected").text();
+    copy(`request/image@${key}?theme=${theme}&max_length=${max_length}&lead_zeros=${lead_zeros}&smoothing=${smoothing}&do_inc=${do_inc}&hard=${hard}`);
 }
 
 function copyDeleteLink() {
@@ -212,7 +217,8 @@ function copyNumberLink() {
     const max_length = document.getElementById("numberMaxLength").value
     const lead_zeros = $("#numberLeadZerosSelector option:selected").text();
     const smoothing = $("#numberSmoothingSelector option:selected").text();
-    copy(`request/number?theme=${theme}&value=${value}&max_length=${max_length}&lead_zeros=${lead_zeros}&smoothing=${smoothing}`);
+    const hard = $("#numberHardSelector option:selected").text();
+    copy(`request/number?theme=${theme}&value=${value}&max_length=${max_length}&lead_zeros=${lead_zeros}&smoothing=${smoothing}&hard=${hard}`);
 }
 
 onLoad()
